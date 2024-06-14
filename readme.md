@@ -64,4 +64,6 @@ while (1 && i < MAX_ITER)
 
 4. Cast ignored returns values to void if it returns anything
 
+```C++
 (void)printf("foo");
+```
