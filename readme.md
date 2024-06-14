@@ -5,7 +5,7 @@
 
 ```C++
 void foo() {
-	return 1;
+    return 1;
 }
 ```
 
@@ -22,11 +22,11 @@ while (foo) {
 
 ```C++
 void foo() {
-	// Body
+    // Body
 }
 
 void bar() { 
-	// Body
+    // Body
 }
 
 void foo() { }
