@@ -4,7 +4,7 @@
 1. Identation is always 4 spaces, tabs should never be used
 
 ```C++
-void foo() {
+int foo() {
 	return 1;
 }
 ```
@@ -13,7 +13,7 @@ void foo() {
 
 ```C++
 class foo {
-void foo () {
+int foo () {
 if (foo) {
 while (foo) {
 ```
