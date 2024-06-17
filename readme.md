@@ -155,7 +155,7 @@ int parse_header(char *data, header *ptr) { // <--- STACK-BASED IMPL
 ```C++
 void itarate_modules(module* ptr) { // <--- BAD
     while (*ptr) {
-        if (module->is_native || module->has_data) {
+        if (ptr->is_native || ptr->has_data) {
             method* mtd_list = module->methods;
             while (*method) {
                 if (method->is_public || method->is_static) {
@@ -170,7 +170,7 @@ void itarate_modules(module* ptr) { // <--- BAD
 
 void itarate_modules(module *ptr) { // <--- GOOD
     while (*ptr) {
-        if (!module->is_native || !module->has_data)
+        if (!ptr->is_native || !ptr->has_data)
             continue;
         method* mtd_list = module->methods;
         while (*method) {
