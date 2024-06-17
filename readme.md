@@ -44,11 +44,11 @@ int get_extension(const char *path, char *buff, int max_size) {
 
 ```C++
 
-if (cond) { // <--- WRONG
+if (cond) { // <--- BAD
     action;
 }
 
-if (cond) // <--- CORRECT
+if (cond) //   <--- GOOD
     action;
 while (cond)
     action;
@@ -128,29 +128,23 @@ while (1)                     // <--- BAD
 while (1 && i < MAX_ITER)     // <--- GOOD
 ```
 
-3. Heap usage should be avoided as much as possible. No dynamic allocations (eg. malloc & free). This doesn't include pre-made essentials, such as linked lists and libraries
+3. Heap usage should be avoided as much as possible. No dynamic allocations (eg. malloc & free)
 
 ```C++
-header* parse_header(char *data) {          // <--- USES HEAP
+header* parse_header(char *data) {          // <--- BAD
     header* result = (header*)malloc(sizeof(header));
     // fill up result
     return result;
 }
 
-int parse_header(char *data, header *ptr) { // <--- STACK-BASED IMPL
+int parse_header(char *data, header *ptr) { // <--- GOOD
     int status;
     // fill up header ptr by ref
     return status;
 }
 ```
 
-4. Avoid embeding multiple ifs inside each other, use **break**, **continue**, **return** instead.
-
-<div align=center>
-    <img width="100%" src="Images/branch_sample.png"><br/>
-    <text>This is what might happen if this rule isn't followed</text>
-</div>
-<br/>
+4. Avoid embeding multiple expressions (if/for/while etc.) inside each other, use **break**, **continue**, **return** instead.
 
 ```C++
 void itarate_modules(module* ptr) { // <--- BAD
@@ -183,3 +177,9 @@ void itarate_modules(module *ptr) { // <--- GOOD
     }
 }
 ```
+
+<div align=center>
+    <img width="100%" src="Images/branch_sample.png"><br/>
+    <text>This is what might happen if this rule isn't followed</text>
+</div>
+<br/>
