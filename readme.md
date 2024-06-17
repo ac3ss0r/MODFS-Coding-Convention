@@ -1,15 +1,62 @@
+# MODFS CODING CONVENTION
+Our own coding conventions for most relevant languages designed for maximum readability, performance and safety.
 
-# CODE FORMATTING
+## Formatting
 
-1. Identation is always 4 spaces, tabs should never be used
+1. Namings in the source code should be based on the standard library namings for the used programming language.
 
+```C#
+class CSharpClass {
+    void CSharpMethod() {}
+}
+```
+```Java
+class JavaClass {
+    void javaMethod() {}
+}
+```
 ```C++
-int foo() {
-	return 1;
+class cpp_class {
+    void cpp_method() {}
 }
 ```
 
-2. The braces should always be at the same line. This involves class, method, loop, branch and all other definitions. This allows the code to be compact (take less screen height) and readable as much as possible
+2. Identation is always 4 spaces, tabs should never be used
+
+```C++
+int get_extension(const char *path, char *buff, int max_size) {
+    int size = strlen(path),
+        index = 0;
+    for (int i = 0; i < size; i++)
+        if (path[i] == '.' && i!=size-1) 
+            index = i+1;
+        else if (path[i] == '/' || path[i] == '\\')
+            index = 0; 
+    if (index && max_size >= size-index) {
+        strncpy(buff, &path[index], size-index);
+        buff[size-index] = '\0';
+    }
+    return index>0;
+}
+```
+
+3. If the loop/condition block is 1 line don't use braces.
+
+```C++
+
+if (cond) { // <--- WRONG
+    action;
+}
+
+if (cond) // <--- CORRECT
+    action;
+while (cond)
+    action;
+for (int i=0; i<10;i++)
+    action;
+```
+
+4. The braces should be always at the same line. This involves class, method, loop, branch and all other definitions. This allows the code to be compact (take less screen height) and readable as much as possible
 
 ```C++
 class foo {
@@ -18,15 +65,15 @@ if (foo) {
 while (foo) {
 ```
 
-3. There should be 1 line break between methods definitions but only the ones which are > 1 line in height. Same for fields
+5. There should be 1 line break between methods definitions but only for the ones which are > 1 line in height. Same for fields
 
 ```C++
 void foo() {
-	// Body
+    // Body
 }
 
 void bar() { 
-	// Body
+    // Body
 }
 
 void foo() { }
@@ -35,35 +82,104 @@ int foo;
 int bar;
 ```
 
-4. Line breaks should be only used when needed to mark logical code blocks
+6. Line breaks should be only used when needed to mark logical code blocks
 
 ```C++
-struct user;
-user.name = "Ivan";
-user.surname = "Ivanov";
+struct info;           // Initialize user
+info.name = "Ivan";
+info.surname = "Ivanov";
 
-struct server;
-server.address = "192.168.0.1";
-connect(server);
+struct server;         // Initialize server
+server.address = "127.0.0.1";
+server.port = 8080;
+
+if (connect(server)) { // Connect & send data
+    printf("Connected to server\n");
+    server.send(info);
+    server.disconnect();
+}
 ```
 
-5. The code should be as compact as possible but still remain clean & readable.
+7. The code should be as compact as possible but still remain clean & readable.
 
-# IMPLEMENTATION
+## Implementation
 
-1. Never use recursion (replace with loops if needed)
+1. Never use recursion (replace with loops if needed) to avoid stack overflow & control flow errors.
+
+```C++
+
+int factorial(int n) {       // <--- BAD 
+    if (n == 0) return 1;
+    else return n * factorial(n - 1);
+}
+
+int factorial(int n) {       // <--- GOOD
+    int result = 1;
+    for (int i = 1; i <= n; i++)
+        result *= i;
+    return result;
+}
+```
 
 2. All loops should have fixed bounds to prevent soft-locking the program.
 
 ```C++
-while (1) // wrong
-while (1 && i < MAX_ITER)
+while (1)                     // <--- BAD
+while (1 && i < MAX_ITER)     // <--- GOOD
 ```
 
 3. Heap usage should be avoided as much as possible. No dynamic allocations (eg. malloc & free). This doesn't include pre-made essentials, such as linked lists and libraries
 
-4. Cast ignored returns values to void if it returns anything
+```C++
+header* parse_header(char *data) {          // <--- USES HEAP
+    header* result = (header*)malloc(sizeof(header));
+    // fill up result
+    return result;
+}
+
+int parse_header(char *data, header *ptr) { // <--- STACK-BASED IMPL
+    int status;
+    // fill up header ptr by ref
+    return status;
+}
+```
+
+4. Avoid embeding multiple ifs inside each other, use **break**, **continue**, **return** instead.
+
+<div align=center>
+    <img width="100%" src="Images/branch_sample.png"><br/>
+    <text>This is what might happen if this rule isn't followed</text>
+</div>
+<br/>
 
 ```C++
-(void)printf("foo");
+void itarate_modules(module* ptr) { // <--- BAD
+    while (*ptr) {
+        if (module->is_native || module->has_data) {
+            method* mtd_list = module->methods;
+            while (*method) {
+                if (method->is_public || method->is_static) {
+                    // Process method
+                }
+                method++;
+            }
+        }
+        ptr++;
+    }
+}
+
+void itarate_modules(module *ptr) { // <--- GOOD
+    while (*ptr) {
+        if (!module->is_native || !module->has_data)
+            continue;
+        method* mtd_list = module->methods;
+        while (*method) {
+            if (!method->is_public || !method->is_static)
+                continue;
+            // Process method
+            method++;
+        }
+        ptr++;
+    }
+}
 ```
