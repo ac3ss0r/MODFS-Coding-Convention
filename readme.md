@@ -1,5 +1,5 @@
 # MODFS CODING CONVENTION
-Our own coding conventions for most relevant languages designed for maximum readability, performance and safety.
+A custom coding convention for most relevant languages designed for maximum readability, performance and safety.
 
 ## Formatting
 
@@ -28,8 +28,8 @@ int get_extension(const char *path, char *buff, int max_size) {
     int size = strlen(path),
         index = 0;
     for (int i = 0; i < size; i++)
-        if (path[i] == '.' && i!=size-1) 
-            index = i+1;
+        if (path[i] == '.' && i != size - 1) 
+            index = i + 1;
         else if (path[i] == '/' || path[i] == '\\')
             index = 0; 
     if (index && max_size >= size-index) {
