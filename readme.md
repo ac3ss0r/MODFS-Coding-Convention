@@ -183,3 +183,83 @@ void itarate_modules(module *ptr) { // <--- GOOD
     <text>This is what might happen if this rule isn't followed</text>
 </div>
 <br/>
+
+## Class Rules
+
+1. Private members should have a **_** suffix.
+
+```C++
+class shape {
+private:
+    int height_;
+    int width_;
+};
+```
+
+2. Always explicitly specify the visibility of class members.
+
+```C++
+class shape { // <--- BAD
+    int height_;
+    int width_;
+};
+
+class shape { // <--- GOOD
+private:
+    int height_;
+    int width_;
+};
+```
+
+3. Prefer seperating variable and method declarations by visibility sections.
+
+```C++
+class shape {
+public:
+    int height;
+    int width;
+
+public:
+    void draw() { }
+    void resize() { }
+}
+```
+
+4. Private section should be at the end of the class.
+
+```C++
+class shape {
+public:
+    int height;
+    int width;
+
+private:
+    void draw() { }
+    void resize() { }
+};
+```
+
+5. Separate between visibility sections for readability.
+
+```C++
+class shape { // <--- BAD
+public:
+    int height;
+    int width;
+private:
+    void draw() { }
+    void resize() { }
+};
+
+class shape { // <--- GOOD
+public:
+    int height;
+    int width;
+
+private:
+    void draw() { }
+    void resize() { }
+};
+```
+
+6. Avoid using inheritance when unnecessary.
