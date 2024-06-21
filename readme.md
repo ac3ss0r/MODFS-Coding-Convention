@@ -1,9 +1,9 @@
 # MODFS CODING CONVENTION
 A custom coding convention for most relevant languages designed for maximum readability, performance and safety.
 
-## Formatting
+## Namings
 
-1. Namings in the source code should be based on the standard library namings for the used programming language.
+1. Namings in the source code should be based on the standard library namings for the used programming language. This makes the code clean & readable when using the default libraries.
 
 ```C#
 class CSharpClass {
@@ -21,26 +21,45 @@ class cpp_class {
 }
 ```
 
-2. Identation is always 4 spaces, tabs should never be used
+2. Macros (both methods & constant definitions) should be capital case unless existing members are redefined on purpose (for example, obfuscation). This way it's always easy to differentiate macro usages from regular members usages.
+
+```C
+#define TEST    // <--- GOOD
+#define TEST(x)
+
+#define test
+#define test(x) // <--- BAD
+```
+
+## Formatting
+
+1. The braces should be always at the same line. This involves class, method, loop, branch and all other definitions. This reduces the overall code height and makes it more readable.
 
 ```C++
-int get_extension(const char *path, char *buff, int max_size) {
-    int size = strlen(path),
-        index = 0;
-    for (int i = 0; i < size; i++)
-        if (path[i] == '.' && i != size - 1) 
-            index = i + 1;
-        else if (path[i] == '/' || path[i] == '\\')
-            index = 0; 
-    if (index && max_size >= size-index) {
-        strncpy(buff, &path[index], size-index);
-        buff[size-index] = '\0';
+class foo {
+int foo () {
+if (foo) {
+while (foo) {
+for (;;;) {
+```
+
+2. Identation should be always 4 spaces, tabs shouldn't be used.
+
+```C++
+char *get_extension(char *path) {
+    char *result = {0};
+    while (*path) {
+    if (*path == '.')
+            result = path + 1;
+        else if (*path == '\\' || *path == '/')
+            result = {0};
+        path++;
     }
-    return index>0;
+    return result;
 }
 ```
 
-3. If the loop/condition block is 1 line don't use braces.
+4. If the loop/condition block is 1 line braces shouldn't be used. This requirement is not strict, but recommended
 
 ```C++
 
@@ -48,7 +67,7 @@ if (cond) { // <--- BAD
     action;
 }
 
-if (cond) //   <--- GOOD
+if (cond)   // <--- GOOD
     action;
 while (cond)
     action;
@@ -56,16 +75,7 @@ for (int i=0; i<10;i++)
     action;
 ```
 
-4. The braces should be always at the same line. This involves class, method, loop, branch and all other definitions. This allows the code to be compact (take less screen height) and readable as much as possible
-
-```C++
-class foo {
-int foo () {
-if (foo) {
-while (foo) {
-```
-
-5. There should be 1 line break between methods definitions but only for the ones which are > 1 line in height. Same for fields
+5. There should be 1 line break between member definitions but only if their height is > 1 line. This involves methods, fields, etc
 
 ```C++
 void foo() {
@@ -82,7 +92,7 @@ int foo;
 int bar;
 ```
 
-6. Line breaks should be only used when needed to mark logical code blocks
+6. Line breaks should be used to mark logical blocks, or not used at all. Line breaks shouldn't be used without a proper reason
 
 ```C++
 struct info;           // Initialize user
@@ -100,11 +110,11 @@ if (connect(server)) { // Connect & send data
 }
 ```
 
-7. The code should be as compact as possible but still remain clean & readable.
+8. The code should be as compact as possible but still remain clean & readable.
 
 ## Implementation
 
-1. Never use recursion (replace with loops if needed) to avoid stack overflow & control flow errors.
+1. Recursion usage should be avoided as much as possible to prevent stack overflow & control flow errors. Recursive implementations can be "unwrapped" to use loops instead.
 
 ```C++
 
@@ -121,14 +131,14 @@ int factorial(int n) {       // <--- GOOD
 }
 ```
 
-2. All loops should have fixed bounds to prevent soft-locking the program.
+2. All loops should have fixed bounds to prevent soft-locking the program. This doesn't involve string-related loops, such as strlen/strtok, etc.
 
 ```C++
 while (1)                     // <--- BAD
 while (1 && i < MAX_ITER)     // <--- GOOD
 ```
 
-3. Heap usage should be avoided as much as possible. No dynamic allocations (eg. malloc & free)
+3. Heap usage (malloc, calloc, new, etc.) should be avoided as much as possible. This doesn't involve pre-made libraries which are considered to be 100% secure (linked lists, for example).
 
 ```C++
 header* parse_header(char *data) {          // <--- BAD
@@ -144,7 +154,7 @@ int parse_header(char *data, header *ptr) { // <--- GOOD
 }
 ```
 
-4. Avoid embeding multiple expressions (if/for/while etc.) inside each other, use **break**, **continue**, **return** instead.
+4. Avoid embeding multiple braced expressions (if/for/while etc.) inside each other, use **break**, **continue**, **return** instead. This prevents deep bracing & improves readability. This will get very noticeable while writing large and complex methods.
 
 ```C++
 void itarate_modules(module* ptr) { // <--- BAD
@@ -183,6 +193,17 @@ void itarate_modules(module *ptr) { // <--- GOOD
     <text>This is what might happen if this rule isn't followed</text>
 </div>
 <br/>
+
+5. Use header-guards named by the header filename in capital-case. Don't use just #pragma once, since it's not supported by all compilers - use either both or just header guards.
+
+```C
+#ifndef HEADER_H // <--- GOOD
+#define HEADER_H
+// the header code
+#endif
+
+#pragma once    //  <--- BAD
+```
 
 ## Class Rules
 
